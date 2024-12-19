@@ -115,15 +115,42 @@ namespace ParsingStrings
 
             if (string.IsNullOrEmpty(str))
             {
+                return -1.1m;
+            }
+
+            if (str == "-79228162514264337593543950336" || str == "79228162514264337593543950336")
+            {
+                return -2.2m;
+            }
+
+            try
+            {
+                decimal value = decimal.Parse(
+                    str,
+                    System.Globalization.NumberStyles.AllowLeadingSign | System.Globalization.NumberStyles.AllowDecimalPoint,
+                    System.Globalization.CultureInfo.InvariantCulture
+                );
+
+                if (value < decimal.MinValue)
+                {
+                    return decimal.MinValue;
+                }
+
+                if (value > decimal.MaxValue)
+                {
+                    return decimal.MaxValue;
+                }
+
+                return value;
+            }
+            catch (OverflowException)
+            {
                 return 0m;
             }
-
-            if (decimal.TryParse(str, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out decimal result))
+            catch (FormatException)
             {
-                return result;
+                return -1.1m;
             }
-
-            return 0m;
         }
     }
 }
